@@ -80,6 +80,11 @@ if [ ! -f "$HERMES_HOME/config.yaml" ]; then
     cp "$INSTALL_DIR/cli-config.yaml.example" "$HERMES_HOME/config.yaml"
 fi
 
+# Make MCP integration: seed editable skill and MCP config if absent.
+if [ -f "$INSTALL_DIR/docker/bootstrap_make_mcp.py" ]; then
+    python3 "$INSTALL_DIR/docker/bootstrap_make_mcp.py"
+fi
+
 # SOUL.md
 if [ ! -f "$HERMES_HOME/SOUL.md" ]; then
     cp "$INSTALL_DIR/docker/SOUL.md" "$HERMES_HOME/SOUL.md"

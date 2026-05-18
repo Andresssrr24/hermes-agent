@@ -84,6 +84,9 @@ RUN uv sync --frozen --no-install-project --extra all --extra messaging
 # .dockerignore excludes node_modules, so the installs above survive.
 COPY --chown=hermes:hermes . .
 
+# Install the local Make MCP stdio server used by Hermes at runtime.
+RUN cd integrations/make-mcp && npm ci --omit=dev && npm cache clean --force
+
 # Build browser dashboard and terminal UI assets.
 RUN cd web && npm run build && \
     cd ../ui-tui && npm run build

@@ -1,0 +1,28 @@
+{
+  "name": "make-mcp-integration",
+  "version": "1.0.0",
+  "description": "Make.com MCP Server Integration",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "mcp:start": "node server.js",
+    "mcp:inspect": "node tools/inspect-local-mcp.js",
+    "dev": "node --watch index.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "make",
+    "mcp",
+    "automation",
+    "integration"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "dotenv": "^16.4.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {}
+}
