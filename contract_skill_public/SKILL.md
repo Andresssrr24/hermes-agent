@@ -32,6 +32,8 @@ Do not use this skill to negotiate terms, add clauses, generate a different serv
 - Add your private PDF templates to `templates/650.pdf`, `templates/1500.pdf`, and `templates/2500.pdf` or update `references/plans.json` to match your plan keys.
 - Ensure PyMuPDF is available in the Python environment used by Hermes.
 - Before production use, set professional-party metadata in `references/plans.json`.
+- To enable Drive uploads, complete Google Workspace OAuth with the bundled `google-workspace` skill.
+- Set `google_drive.folder_id` in `references/plans.json` to your fixed Drive folder and enable `upload_automatically` if desired.
 
 The sample configuration intentionally uses placeholder company and client data.
 
@@ -72,6 +74,8 @@ Prefer JSON input for fewer quoting issues:
 | Task | Tool |
 | --- | --- |
 | Generate PDF | `scripts/render_contract.py` |
+| Generate PDF without Drive upload | `scripts/render_contract.py --no-drive-upload` |
+| Upload existing PDF | `scripts/upload_contract_to_drive.py` |
 | Generate calibration grid | `scripts/calibrate_template.py` |
 | Adjust layout | `references/fields.json` |
 | Configure plans and professional data | `references/plans.json` |
@@ -83,7 +87,7 @@ Prefer JSON input for fewer quoting issues:
 3. Normalize the ad budget to a USD number without changing the user's value.
 4. Run `scripts/render_contract.py` with structured input.
 5. Verify the command returns `success: true` and an output path.
-6. Return the PDF path to the user.
+6. If Drive upload is enabled, verify `drive.webViewLink` and return it with the PDF path.
 
 If placement looks wrong, generate a grid with `scripts/calibrate_template.py` and adjust `references/fields.json`.
 
@@ -94,6 +98,7 @@ If placement looks wrong, generate a grid with `scripts/calibrate_template.py` a
 - Do not change legal clauses, prices, plan deliverables, renewal terms, or cancellation terms.
 - Do not use example client data from templates in a generated contract.
 - Replace all placeholder professional-party data before production use.
+- If `drive.success` is false but top-level `success` is true, the local PDF was created; fix OAuth or folder permissions and upload the same PDF with `scripts/upload_contract_to_drive.py`.
 
 ## Verification
 
@@ -103,3 +108,4 @@ If placement looks wrong, generate a grid with `scripts/calibrate_template.py` a
 - The configured professional-party data is present where expected.
 - No unapproved fields were added.
 - Signature areas remain ready to sign manually.
+- If Drive upload is enabled, the shared link opens without requesting access.

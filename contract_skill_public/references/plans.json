@@ -9,6 +9,12 @@
     "ein": "COMPANY-TAX-ID",
     "address": "COMPANY ADDRESS"
   },
+  "google_drive": {
+    "folder_id": "CONFIGURE_GOOGLE_DRIVE_FOLDER_ID",
+    "share_type": "anyone",
+    "share_role": "reader",
+    "upload_automatically": false
+  },
   "plans": {
     "650": {
       "template": "templates/650.pdf",
