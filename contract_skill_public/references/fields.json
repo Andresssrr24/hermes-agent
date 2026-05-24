@@ -1,0 +1,200 @@
+{
+  "version": 1,
+  "notes": [
+    "Coordinates are PyMuPDF points from the top-left page origin.",
+    "The renderer first tries text-search replacement using legacy_values.",
+    "Overlay boxes below are conservative fallbacks and may need calibration on first use."
+  ],
+  "plans": {
+    "650": {
+      "manual_blocks": [
+        {
+          "name": "professional_intro",
+          "page": 0,
+          "rect": [65, 145, 535, 252],
+          "font_size": 10,
+          "leading": 13,
+          "lines": [
+            "{professional_company_name}, Numero de Registro/EIN: {professional_ein},",
+            "DBA: {professional_dba}, empresa especializada en servicios de marketing digital y gestion",
+            "publicitaria, ubicada en {professional_address}, representada por {professional_representative_name},",
+            "numero de identificacion personal {professional_representative_identity}, en adelante EL PROFESIONAL,"
+          ]
+        },
+        {
+          "name": "client_intro",
+          "page": 0,
+          "rect": [65, 255, 535, 350],
+          "font_size": 10,
+          "leading": 13,
+          "lines": [
+            "{company_name}, empresa del sector {company_sector}, con RNC/Documento No. {company_document},",
+            "debidamente representada por {owner_name}, titular del documento de identidad No.",
+            "{owner_identity_document}, en adelante EL CLIENTE."
+          ]
+        },
+        {
+          "name": "ad_budget_note",
+          "page": 2,
+          "rect": [65, 295, 535, 355],
+          "font_size": 10,
+          "leading": 13,
+          "lines": [
+            "Se recomienda una inversion publicitaria de ${ad_budget_30_days_usd} USD mensuales,",
+            "pagados directamente por EL CLIENTE en su cuenta publicitaria de Meta Ads."
+          ]
+        },
+        {
+          "name": "client_signature",
+          "page": 3,
+          "rect": [65, 445, 535, 540],
+          "font_size": 10,
+          "leading": 13,
+          "lines": [
+            "Nombre: {owner_name}",
+            "Empresa: {company_name}",
+            "Whatsapp: {owner_whatsapp}",
+            "Correo: {owner_email}",
+            "Firma: __________________________"
+          ]
+        }
+      ]
+    },
+    "1500": {
+      "manual_blocks": [
+        {
+          "name": "professional_intro",
+          "page": 1,
+          "rect": [55, 70, 555, 166],
+          "font_size": 9,
+          "leading": 11,
+          "uppercase": true,
+          "lines": [
+            "{professional_company_name}, DBA: {professional_dba}, EMPRESA ESPECIALIZADA EN",
+            "SERVICIOS DE MARKETING DIGITAL Y GESTION PUBLICITARIA, UBICADA EN",
+            "{professional_address}, REPRESENTADA POR {professional_representative_name},",
+            "NUMERO DE IDENTIFICACION PERSONAL {professional_representative_identity}, EN ADELANTE EL PROFESIONAL,"
+          ]
+        },
+        {
+          "name": "cover_company_name",
+          "page": 0,
+          "rect": [115, 510, 560, 535],
+          "font_size": 11,
+          "leading": 13,
+          "lines": ["{company_name}"]
+        },
+        {
+          "name": "client_intro",
+          "page": 1,
+          "rect": [55, 175, 555, 213],
+          "redact_rect": [55, 175, 555, 213],
+          "insert_at": [55, 135],
+          "font_size": 9,
+          "leading": 11,
+          "uppercase": true,
+          "lines": [
+            "{company_name}: EMPRESA DEL SECTOR {company_sector}, CON RNC/DOCUMENTO {company_document},",
+            "REPRESENTADA POR {owner_name}, NUMERO DE IDENTIFICACION PERSONAL",
+            "{owner_identity_document}, EN ADELANTE EL CLIENTE."
+          ]
+        },
+        {
+          "name": "start_date",
+          "page": 3,
+          "rect": [58, 468, 560, 491],
+          "font_size": 11,
+          "leading": 16,
+          "uppercase": true,
+          "runs": [
+            {"text": "FECHA DE INICIO: ", "fontname": "hebo", "font_size": 11},
+            {"text": "EL PRESENTE CONTRATO INICIARÁ SUS EFECTOS EL {contract_date_es}.", "fontname": "helv", "font_size": 11}
+          ]
+        },
+        {
+          "name": "signature_client",
+          "page": 4,
+          "rect": [343.5, 720, 570, 790],
+          "font_size": 10,
+          "leading": 9.8,
+          "fontname": "hebo",
+          "uppercase": true,
+          "lines": [
+            "{owner_name}",
+            "{company_name}",
+            "RNC: {company_document}",
+            "IDENTIFICACION: {owner_identity_document}"
+          ]
+        }
+      ]
+    },
+    "2500": {
+      "manual_blocks": [
+        {
+          "name": "professional_intro",
+          "page": 1,
+          "rect": [55, 70, 555, 166],
+          "font_size": 9,
+          "leading": 11,
+          "uppercase": true,
+          "lines": [
+            "{professional_company_name}, DBA: {professional_dba}, EMPRESA ESPECIALIZADA EN",
+            "SERVICIOS DE MARKETING DIGITAL Y GESTION PUBLICITARIA, UBICADA EN",
+            "{professional_address}, REPRESENTADA POR {professional_representative_name},",
+            "NUMERO DE IDENTIFICACION PERSONAL {professional_representative_identity}, EN ADELANTE EL PROFESIONAL,"
+          ]
+        },
+        {
+          "name": "cover_company_name",
+          "page": 0,
+          "rect": [115, 510, 560, 535],
+          "font_size": 11,
+          "leading": 13,
+          "lines": ["{company_name}"]
+        },
+        {
+          "name": "client_intro",
+          "page": 1,
+          "rect": [55, 175, 555, 225],
+          "redact_rect": [55, 175, 555, 225],
+          "insert_at": [55, 135],
+          "font_size": 9,
+          "leading": 11,
+          "uppercase": true,
+          "lines": [
+            "{company_name}: EMPRESA DEL SECTOR {company_sector}, CON RNC/DOCUMENTO {company_document},",
+            "REPRESENTADA POR {owner_name}, NUMERO DE IDENTIFICACION PERSONAL",
+            "{owner_identity_document}, EN ADELANTE EL CLIENTE."
+          ]
+        },
+        {
+          "name": "start_date",
+          "page": 3,
+          "rect": [58, 468, 560, 491],
+          "font_size": 11,
+          "leading": 16,
+          "uppercase": true,
+          "runs": [
+            {"text": "FECHA DE INICIO: ", "fontname": "hebo", "font_size": 11},
+            {"text": "EL PRESENTE CONTRATO INICIARÁ SUS EFECTOS EL {contract_date_es}.", "fontname": "helv", "font_size": 11}
+          ]
+        },
+        {
+          "name": "signature_client",
+          "page": 4,
+          "rect": [343.5, 720, 570, 790],
+          "font_size": 10,
+          "leading": 9.8,
+          "fontname": "hebo",
+          "uppercase": true,
+          "lines": [
+            "{owner_name}",
+            "{company_name}",
+            "RNC: {company_document}",
+            "IDENTIFICACION: {owner_identity_document}"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "plan": "2500",
+  "company_name": "SAMPLE CLIENT LLC",
+  "company_sector": "real estate",
+  "company_whatsapp": "+1 000 000 0000",
+  "company_document": "SAMPLE-COMPANY-ID",
+  "owner_name": "Sample Owner",
+  "owner_whatsapp": "+1 000 000 0000",
+  "owner_email": "owner@example.invalid",
+  "owner_identity_document": "SAMPLE-OWNER-ID",
+  "ad_budget_30_days_usd": "2500"
+}

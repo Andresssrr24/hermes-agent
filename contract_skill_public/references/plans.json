@@ -1,0 +1,57 @@
+{
+  "professional": {
+    "company_name": "YOUR COMPANY LLC",
+    "dba": "YOUR BRAND",
+    "brand_name": "YourBrand",
+    "representative_name": "AUTHORIZED REPRESENTATIVE",
+    "representative_title": "TITLE",
+    "representative_identity": "REPRESENTATIVE-ID",
+    "ein": "COMPANY-TAX-ID",
+    "address": "COMPANY ADDRESS"
+  },
+  "plans": {
+    "650": {
+      "template": "templates/650.pdf",
+      "output_prefix": "company-contract",
+      "plan_name": "Starter Plan",
+      "price_text": "$650 USD monthly",
+      "ad_budget_range": "$500 - $1,000 USD",
+      "legacy_values": {
+        "company_name": "SAMPLE CLIENT COMPANY",
+        "company_document": "SAMPLE-COMPANY-ID",
+        "company_address": "SAMPLE CLIENT ADDRESS",
+        "owner_name": "SAMPLE OWNER",
+        "owner_identity_document": "SAMPLE-OWNER-ID",
+        "owner_whatsapp": "+1 000 000 0000",
+        "owner_email": "owner@example.invalid",
+        "ad_budget_30_days_usd": "$500"
+      }
+    },
+    "1500": {
+      "template": "templates/1500.pdf",
+      "output_prefix": "company-contract",
+      "plan_name": "Standard Plan",
+      "price_text": "$1,500 USD",
+      "ad_budget_range": "$500 - $2,000 USD",
+      "legacy_values": {
+        "company_name": "SAMPLE CLIENT COMPANY",
+        "company_document": "SAMPLE-COMPANY-ID",
+        "owner_name": "SAMPLE OWNER",
+        "owner_identity_document": "SAMPLE-OWNER-ID"
+      }
+    },
+    "2500": {
+      "template": "templates/2500.pdf",
+      "output_prefix": "company-contract",
+      "plan_name": "Premium Plan",
+      "price_text": "$2,500 USD",
+      "ad_budget_range": "$2,000 - $3,000 USD",
+      "legacy_values": {
+        "company_name": "SAMPLE CLIENT COMPANY",
+        "company_document": "SAMPLE-COMPANY-ID",
+        "owner_name": "SAMPLE OWNER",
+        "owner_identity_document": "SAMPLE-OWNER-ID"
+      }
+    }
+  }
+}
