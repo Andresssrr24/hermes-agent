@@ -76,6 +76,8 @@ Prefer JSON input for fewer quoting issues:
 | Generate PDF | `scripts/render_contract.py` |
 | Generate PDF without Drive upload | `scripts/render_contract.py --no-drive-upload` |
 | Upload existing PDF | `scripts/upload_contract_to_drive.py` |
+| Process confirmed n8n jobs | `scripts/poll_ready_contracts.py` |
+| Check pending confirmed jobs | `scripts/poll_ready_contracts.py --summary --insecure-skip-verify` |
 | Generate calibration grid | `scripts/calibrate_template.py` |
 | Adjust layout | `references/fields.json` |
 | Configure plans and professional data | `references/plans.json` |
@@ -91,6 +93,50 @@ Prefer JSON input for fewer quoting issues:
 
 If placement looks wrong, generate a grid with `scripts/calibrate_template.py` and adjust `references/fields.json`.
 
+## n8n Onboarding Flow
+
+The client form can send intake data to n8n without a plan. n8n should ask an internal user on WhatsApp to confirm which plan/price was paid before Hermes generates a contract.
+
+Accepted WhatsApp replies are `650`, `$650`, `Plan de Inicio`, `1500`, `$1500`, `Plan Pro`, `2500`, `$2500`, or `Plan Elite`. If more than one submission is pending, n8n should require the submission ID in the reply.
+
+After n8n marks a job as `ready_for_contract`, run:
+
+```bash
+N8N_READY_CONTRACTS_URL="https://n8n.example/webhook/ready-contracts" \
+N8N_CONTRACT_COMPLETED_URL="https://n8n.example/webhook/contract-completed" \
+N8N_CONTRACTS_TOKEN="..." \
+python3 scripts/poll_ready_contracts.py
+```
+
+The ready-job payload may be either a single object, a list, or an object with `jobs`, `data`, `items`, or `ready`. Each job must include `submission_id`, `plan`, and all required contract fields. The poller posts the renderer result back to n8n so n8n can send the final link over WhatsApp.
+
+## Pending Contract Questions
+
+When the user asks `Tenemos contratos pendientes?`, `Hay contratos pendientes?`, `Revisa contratos pendientes`, or similar, interpret this as a request to check n8n for confirmed jobs with `ready_for_contract` status. These are submissions where an internal user already confirmed the paid plan.
+
+Check without generating contracts first:
+
+```bash
+N8N_READY_CONTRACTS_URL="https://n8n.example/webhook/ready-contracts" \
+N8N_CONTRACTS_TOKEN="..." \
+N8N_INSECURE_SKIP_VERIFY=true \
+python3 scripts/poll_ready_contracts.py --summary --insecure-skip-verify
+```
+
+If `ready_count` is `0`, tell the user there are no confirmed contracts ready to generate. If jobs are returned, summarize each one by `submission_id`, `company_name`, `owner_name`, `owner_email`, `plan`, and `ad_budget_30_days_usd`, then ask whether to generate them unless the user already asked to process/generate.
+
+When the user asks to process or generate pending contracts, run:
+
+```bash
+N8N_READY_CONTRACTS_URL="https://n8n.example/webhook/ready-contracts" \
+N8N_CONTRACT_COMPLETED_URL="https://n8n.example/webhook/contract-completed" \
+N8N_CONTRACTS_TOKEN="..." \
+N8N_INSECURE_SKIP_VERIFY=true \
+python3 scripts/poll_ready_contracts.py --insecure-skip-verify
+```
+
+After processing, report successful contracts with local PDF paths and Drive links. Report failed jobs with their `submission_id` and error. Do not generate contracts for submissions still awaiting plan confirmation.
+
 ## Pitfalls
 
 - Do not include fields that your intake form does not collect.
@@ -99,6 +145,9 @@ If placement looks wrong, generate a grid with `scripts/calibrate_template.py` a
 - Do not use example client data from templates in a generated contract.
 - Replace all placeholder professional-party data before production use.
 - If `drive.success` is false but top-level `success` is true, the local PDF was created; fix OAuth or folder permissions and upload the same PDF with `scripts/upload_contract_to_drive.py`.
+- Do not generate contracts for n8n onboarding submissions until the company user confirms the paid plan/price.
+- `Pending contracts` means confirmed `ready_for_contract` jobs, not every submitted onboarding form.
+- Do not infer the plan from campaign budget; use only the confirmed plan from n8n/WhatsApp.
 
 ## Verification
 
