@@ -7,7 +7,9 @@
     "representative_title": "TITLE",
     "representative_identity": "REPRESENTATIVE-ID",
     "ein": "COMPANY-TAX-ID",
-    "address": "COMPANY ADDRESS"
+    "address": "COMPANY ADDRESS",
+    "whatsapp": "+18099164499",
+    "email": "bryan@grwestate.com"
   },
   "google_drive": {
     "folder_id": "CONFIGURE_GOOGLE_DRIVE_FOLDER_ID",

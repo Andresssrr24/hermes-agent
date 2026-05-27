@@ -11,9 +11,11 @@
         {
           "name": "professional_intro",
           "page": 0,
-          "rect": [65, 145, 535, 252],
-          "font_size": 10,
-          "leading": 13,
+          "rect": [65, 180, 535, 250],
+          "redact_rect": [65, 188, 535, 250],
+          "insert_at": [65, 178],
+          "font_size": 9.5,
+          "leading": 11,
           "lines": [
             "{professional_company_name}, Numero de Registro/EIN: {professional_ein},",
             "DBA: {professional_dba}, empresa especializada en servicios de marketing digital y gestion",
@@ -24,13 +26,86 @@
         {
           "name": "client_intro",
           "page": 0,
-          "rect": [65, 255, 535, 350],
-          "font_size": 10,
-          "leading": 13,
+          "rect": [65, 232, 535, 310],
+          "redact_rect": [65, 260, 535, 345],
+          "insert_at": [65, 232],
+          "font_size": 9.5,
+          "leading": 11,
           "lines": [
             "{company_name}, empresa del sector {company_sector}, con RNC/Documento No. {company_document},",
             "debidamente representada por {owner_name}, titular del documento de identidad No.",
             "{owner_identity_document}, en adelante EL CLIENTE."
+          ]
+        },
+        {
+          "name": "parties_intro",
+          "page": 0,
+          "rect": [65, 282, 535, 314],
+          "redact_rect": [65, 350, 535, 390],
+          "font_size": 9.5,
+          "leading": 11,
+          "lines": [
+            "Las partes convienen en celebrar el presente contrato de servicios profesionales (en",
+            "adelante, EL CONTRATO) bajo los siguientes terminos y condiciones:"
+          ]
+        },
+        {
+          "name": "object_section_heading",
+          "page": 0,
+          "rect": [65, 340, 535, 365],
+          "redact_rect": [65, 400, 535, 555],
+          "draw_lines": [[75, 325, 520, 325, 1]],
+          "font_size": 15,
+          "leading": 16,
+          "fontname": "hebo",
+          "lines": [
+            "PRIMERO: OBJETO DEL CONTRATO"
+          ]
+        },
+        {
+          "name": "object_section_body",
+          "page": 0,
+          "rect": [65, 372, 535, 505],
+          "redact": false,
+          "font_size": 9.5,
+          "leading": 13,
+          "lines": [
+            "EL CLIENTE contrata a EL PROFESIONAL para la implementacion de un sistema inicial de",
+            "generacion de leads mediante campanas publicitarias en Meta Ads, enfocado en:",
+            "  - Captacion de clientes potenciales",
+            "  - Validacion de mercado",
+            "  - Generacion de oportunidades de negocio"
+          ]
+        },
+        {
+          "name": "services_section_heading",
+          "page": 0,
+          "rect": [65, 498, 535, 525],
+          "redact_rect": [65, 568, 535, 760],
+          "draw_lines": [[75, 475, 520, 475, 1]],
+          "font_size": 15,
+          "leading": 16,
+          "fontname": "hebo",
+          "lines": [
+            "SEGUNDO: SERVICIOS INCLUIDOS"
+          ]
+        },
+        {
+          "name": "services_section_body",
+          "page": 0,
+          "rect": [65, 535, 535, 735],
+          "redact": false,
+          "font_size": 9.5,
+          "leading": 13,
+          "lines": [
+            "EL PROFESIONAL se compromete a prestar los siguientes servicios:",
+            "",
+            "1. GESTION DE CAMPANAS (META ADS)",
+            "  - Creacion, configuracion y gestion de campanas publicitarias en Facebook e",
+            "    Instagram",
+            "  - Segmentacion estrategica de audiencias",
+            "  - Optimizacion continua basada en resultados",
+            "  - Monitoreo de metricas clave (CTR, CPL, conversiones)"
           ]
         },
         {
@@ -45,12 +120,30 @@
           ]
         },
         {
-          "name": "client_signature",
+          "name": "professional_signature",
           "page": 3,
-          "rect": [65, 445, 535, 540],
+          "rect": [65, 330, 535, 420],
+          "redact_rect": [65, 330, 535, 420],
+          "erase_rects": [[70, 424, 525, 430]],
           "font_size": 10,
           "leading": 13,
           "lines": [
+            "EL PROFESIONAL",
+            "Nombre: {professional_representative_name}",
+            "Empresa: {professional_company_name}",
+            "Whatsapp: {professional_whatsapp}",
+            "Correo: {professional_email}",
+            "Firma: __________________________"
+          ]
+        },
+        {
+          "name": "client_signature",
+          "page": 3,
+          "rect": [65, 440, 535, 555],
+          "font_size": 10,
+          "leading": 13,
+          "lines": [
+            "EL CLIENTE",
             "Nombre: {owner_name}",
             "Empresa: {company_name}",
             "Whatsapp: {owner_whatsapp}",

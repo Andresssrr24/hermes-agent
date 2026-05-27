@@ -131,6 +131,8 @@ def _professional_values(config: dict[str, Any]) -> dict[str, str]:
         "professional_representative_identity": professional["representative_identity"],
         "professional_ein": professional["ein"],
         "professional_address": address,
+        "professional_whatsapp": professional.get("whatsapp", ""),
+        "professional_email": professional.get("email", ""),
     }
 
 
@@ -159,9 +161,17 @@ def _add_manual_blocks(doc: Any, blocks: list[dict[str, Any]], values: dict[str,
     for block in blocks:
         page = doc[int(block["page"])]
         rect = fitz.Rect(*block["rect"])
-        redact_rect = fitz.Rect(*block.get("redact_rect", block["rect"]))
-        page.add_redact_annot(redact_rect, fill=(1, 1, 1))
-        page.apply_redactions()
+        if block.get("redact", True):
+            redact_rect = fitz.Rect(*block.get("redact_rect", block["rect"]))
+            page.add_redact_annot(redact_rect, fill=(1, 1, 1))
+            page.apply_redactions()
+
+        for erase_rect in block.get("erase_rects", []):
+            page.draw_rect(fitz.Rect(*erase_rect), color=(1, 1, 1), fill=(1, 1, 1), overlay=True)
+
+        for line in block.get("draw_lines", []):
+            width = float(line[4]) if len(line) > 4 else 1.0
+            page.draw_line((line[0], line[1]), (line[2], line[3]), color=(0.45, 0.45, 0.45), width=width, overlay=True)
 
         insert_at = block.get("insert_at")
         if insert_at:
