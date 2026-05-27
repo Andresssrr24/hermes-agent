@@ -15,6 +15,7 @@
     "share_role": "reader",
     "upload_automatically": false
   },
+  "google_api_script": "CONFIGURE_GOOGLE_API_SCRIPT",
   "google_sheet": {
     "sheet_id": "CONFIGURE_GOOGLE_SHEET_ID",
     "tab_name": "Sheet1",

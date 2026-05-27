@@ -28,6 +28,19 @@ def _google_api_script() -> Path:
         if path.exists():
             return path
 
+    try:
+        config_path = _skill_dir() / "references" / "plans.json"
+        if config_path.exists():
+            with open(config_path, "r", encoding="utf-8") as fh:
+                config = json.loads(fh.read())
+            api_script = config.get("google_api_script")
+            if api_script:
+                path = Path(api_script).expanduser()
+                if path.exists():
+                    return path
+    except Exception:
+        pass
+
     hermes_home = Path(os.getenv("HERMES_HOME", Path.home() / ".hermes")).expanduser()
     candidates = [
         Path(__file__).resolve().parents[2]

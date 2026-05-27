@@ -33,6 +33,7 @@ Do not use this skill to negotiate terms, add clauses, generate a different serv
 - Ensure PyMuPDF is available in the Python environment used by Hermes.
 - Before production use, set professional-party metadata in `references/plans.json`.
 - To enable Drive uploads, complete Google Workspace OAuth with the bundled `google-workspace` skill.
+- Set `google_api_script` in `references/plans.json` to the absolute path where the google-workspace skill's `google_api.py` lives.
 - Set `google_drive.folder_id` in `references/plans.json` to your fixed Drive folder and enable `upload_automatically` if desired.
 
 The sample configuration intentionally uses placeholder company and client data.
