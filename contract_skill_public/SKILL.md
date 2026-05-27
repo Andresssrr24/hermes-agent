@@ -58,7 +58,7 @@ Prefer JSON input for fewer quoting issues:
 {
   "plan": "2500",
   "company_name": "SAMPLE CLIENT LLC",
-  "company_sector": "real estate",
+  "company_sector": "sample industry",
   "company_whatsapp": "+1 000 000 0000",
   "company_document": "SAMPLE-COMPANY-ID",
   "owner_name": "Sample Owner",
@@ -78,6 +78,7 @@ Prefer JSON input for fewer quoting issues:
 | Upload existing PDF | `scripts/upload_contract_to_drive.py` |
 | Process confirmed n8n jobs | `scripts/poll_ready_contracts.py` |
 | Check pending confirmed jobs | `scripts/poll_ready_contracts.py --summary --insecure-skip-verify` |
+| Check pending jobs with Sheet fallback | `scripts/poll_ready_contracts.py --summary --google-sheet-fallback --insecure-skip-verify` |
 | Generate calibration grid | `scripts/calibrate_template.py` |
 | Adjust layout | `references/fields.json` |
 | Configure plans and professional data | `references/plans.json` |
@@ -105,10 +106,29 @@ After n8n marks a job as `ready_for_contract`, run:
 N8N_READY_CONTRACTS_URL="https://n8n.example/webhook/ready-contracts" \
 N8N_CONTRACT_COMPLETED_URL="https://n8n.example/webhook/contract-completed" \
 N8N_CONTRACTS_TOKEN="..." \
-python3 scripts/poll_ready_contracts.py
+CONTRACT_RENDER_PYTHON="/path/to/hermes/.venv/bin/python" \
+/path/to/hermes/.venv/bin/python scripts/poll_ready_contracts.py
 ```
 
 The ready-job payload may be either a single object, a list, or an object with `jobs`, `data`, `items`, or `ready`. Each job must include `submission_id`, `plan`, and all required contract fields. The poller posts the renderer result back to n8n so n8n can send the final link over WhatsApp.
+
+The n8n ready-contracts workflow must return all required contract fields from the intake data source. If the webhook returns partial data, fix the n8n response mapping first. The response must include: `submission_id`, `plan`, `company_name`, `company_sector`, `company_whatsapp`, `company_document`, `owner_name`, `owner_whatsapp`, `owner_email`, `owner_identity_document`, and `ad_budget_30_days_usd`.
+
+### Google Sheet Fallback
+
+If the n8n ready-contracts webhook returns incomplete job data but the intake Google Sheet has the full submission, rerun the poller with `--google-sheet-fallback`. The fallback is opt-in and only queries Sheets when a job is missing required fields.
+
+```bash
+N8N_READY_CONTRACTS_URL="https://n8n.example/webhook/ready-contracts" \
+N8N_CONTRACTS_TOKEN="..." \
+N8N_INSECURE_SKIP_VERIFY=true \
+CONTRACT_RENDER_PYTHON="/path/to/hermes/.venv/bin/python" \
+/path/to/hermes/.venv/bin/python scripts/poll_ready_contracts.py --summary --google-sheet-fallback --insecure-skip-verify
+```
+
+The fallback reads `google_sheet` settings from `references/plans.json`. It uses the Google OAuth token at `$HERMES_HOME/google_token.json` by default; pass `--google-token-path` to override it. Keep `google_sheet.fallback_enabled` false unless this behavior should always run without the explicit flag.
+
+The poller must run with a Python environment that can import PyMuPDF (`fitz`). Do not use bare `python3` from cron, n8n, or shell automation unless that interpreter has PyMuPDF installed. If a launcher cannot use the Hermes venv directly, set `CONTRACT_RENDER_PYTHON` to the Hermes venv Python so `render_contract.py` runs in the correct environment. Run `scripts/poll_ready_contracts.py --preflight` before processing after runtime changes.
 
 ## Pending Contract Questions
 
@@ -120,7 +140,8 @@ Check without generating contracts first:
 N8N_READY_CONTRACTS_URL="https://n8n.example/webhook/ready-contracts" \
 N8N_CONTRACTS_TOKEN="..." \
 N8N_INSECURE_SKIP_VERIFY=true \
-python3 scripts/poll_ready_contracts.py --summary --insecure-skip-verify
+CONTRACT_RENDER_PYTHON="/path/to/hermes/.venv/bin/python" \
+/path/to/hermes/.venv/bin/python scripts/poll_ready_contracts.py --summary --google-sheet-fallback --insecure-skip-verify
 ```
 
 If `ready_count` is `0`, tell the user there are no confirmed contracts ready to generate. If jobs are returned, summarize each one by `submission_id`, `company_name`, `owner_name`, `owner_email`, `plan`, and `ad_budget_30_days_usd`, then ask whether to generate them unless the user already asked to process/generate.
@@ -132,7 +153,8 @@ N8N_READY_CONTRACTS_URL="https://n8n.example/webhook/ready-contracts" \
 N8N_CONTRACT_COMPLETED_URL="https://n8n.example/webhook/contract-completed" \
 N8N_CONTRACTS_TOKEN="..." \
 N8N_INSECURE_SKIP_VERIFY=true \
-python3 scripts/poll_ready_contracts.py --insecure-skip-verify
+CONTRACT_RENDER_PYTHON="/path/to/hermes/.venv/bin/python" \
+/path/to/hermes/.venv/bin/python scripts/poll_ready_contracts.py --google-sheet-fallback --insecure-skip-verify
 ```
 
 After processing, report successful contracts with local PDF paths and Drive links. Report failed jobs with their `submission_id` and error. Do not generate contracts for submissions still awaiting plan confirmation.

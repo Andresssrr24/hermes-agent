@@ -15,6 +15,25 @@
     "share_role": "reader",
     "upload_automatically": false
   },
+  "google_sheet": {
+    "sheet_id": "CONFIGURE_GOOGLE_SHEET_ID",
+    "tab_name": "Sheet1",
+    "range": "A:Z",
+    "submission_id_column": "submission_id",
+    "fallback_enabled": false,
+    "field_columns": {
+      "plan": "confirmed_plan",
+      "company_name": "company_name",
+      "company_sector": "company_sector",
+      "company_whatsapp": "company_whatsapp",
+      "company_document": "company_document",
+      "owner_name": "owner_name",
+      "owner_whatsapp": "owner_whatsapp",
+      "owner_email": "owner_email",
+      "owner_identity_document": "owner_identity_document",
+      "ad_budget_30_days_usd": "ad_budget_30_days_usd"
+    }
+  },
   "plans": {
     "650": {
       "template": "templates/650.pdf",

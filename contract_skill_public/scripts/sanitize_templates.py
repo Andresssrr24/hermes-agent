@@ -1,47 +1,19 @@
 #!/usr/bin/env python3
 """Generate sanitized public copies of private contract templates.
 
-Replaces client identifiers with placeholders. Professional data and
-legal text are left untouched."""
+Replacement rules are intentionally loaded from an external JSON file so
+private client identifiers do not need to be committed to this public package.
+"""
 
 from __future__ import annotations
 
 import sys
+import json
 from pathlib import Path
 
 import fitz
 
-REPLACEMENTS: dict[str, list[tuple[str, str]]] = {
-    "650.pdf": [
-        ("CONSTRUCTORA REYES RAMIREZ", "[Nombre de la Empresa]"),
-        ("Constructora Reyes Ramirez", "[Nombre de la Empresa]"),
-        ("inmobiliario", "[Sector]"),
-        ("en Rep\u00fablica Dominicana", "en [Pa\u00eds]"),
-        ("131725651", "[Documento Empresa]"),
-        ("AVENIDA LAS PALMAS, NO. 46", "[Direcci\u00f3n Empresa]"),
-        ("Katherine Ramirez", "[Nombre del Propietario]"),
-        ("001-1530949-4", "[Documento Identidad]"),
-        ("$500 USD", "[Presupuesto Campa\u00f1as]"),
-        ("+1 849 918 1620", "[WhatsApp Propietario]"),
-        ("constructorareyesramirez@gmail.com", "[Correo Electr\u00f3nico]"),
-    ],
-    "1500.pdf": [
-        ("DOMARQ SRL Y REPUBLIC REALTORS", "[Nombre de la Empresa]"),
-        ("JONATHAN J DIAZ LIZ", "[Nombre del Propietario]"),
-        ("1-32-81836-9", "[Documento Empresa]"),
-        ("40240164828", "[Documento Identidad]"),
-    ],
-    "2500.pdf": [
-        ("NADER ASSET MANAGEMENT SRL", "[Nombre de la Empresa]"),
-        ("GEORGE ALEXANDER NADER NICOLAS", "[Nombre del Propietario]"),
-        ("SR. GEORGE", "[Nombre del Propietario]"),
-        ("130747083", "[Documento Empresa]"),
-        (
-            "00116507039, EN ADELANTE EL CLIENTE",
-            "[Documento Identidad], EN ADELANTE EL CLIENTE",
-        ),
-    ],
-}
+DEFAULT_RULES_PATH = Path("sanitize-rules.private.json")
 
 
 def _sanitize_pdf(
@@ -69,18 +41,37 @@ def _sanitize_pdf(
     doc.close()
 
 
+def _load_replacements(path: Path) -> dict[str, list[tuple[str, str]]]:
+    with path.open("r", encoding="utf-8") as fh:
+        raw = json.load(fh)
+    replacements: dict[str, list[tuple[str, str]]] = {}
+    for filename, pairs in raw.items():
+        replacements[str(filename)] = [
+            (str(pair["old"]), str(pair["new"]))
+            for pair in pairs
+            if str(pair.get("old", "")).strip()
+        ]
+    return replacements
+
+
 def main() -> int:
     skill_public = Path(__file__).resolve().parents[1]
     skill_private = Path(__file__).resolve().parents[2] / "contract_skill"
+    rules_path = Path(sys.argv[1]).expanduser() if len(sys.argv) > 1 else DEFAULT_RULES_PATH
 
     templates_private = skill_private / "templates"
     templates_public = skill_public / "templates"
+
+    if not rules_path.exists():
+        print(f"error: replacement rules not found: {rules_path}", file=sys.stderr)
+        print("Create a private JSON rules file and do not commit it.", file=sys.stderr)
+        return 1
 
     if not templates_private.is_dir():
         print(f"error: private templates not found at {templates_private}", file=sys.stderr)
         return 1
 
-    for filename, pairs in REPLACEMENTS.items():
+    for filename, pairs in _load_replacements(rules_path).items():
         src = templates_private / filename
         dst = templates_public / filename
         if not src.exists():

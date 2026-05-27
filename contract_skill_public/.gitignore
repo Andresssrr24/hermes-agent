@@ -1,8 +1,8 @@
 __pycache__/
 *.pyc
 .DS_Store
+sanitize-rules.private.json
 output/*.pdf
 templates/*.pdf
 !output/.gitignore
 !templates/README.md
-!templates/*.pdf
