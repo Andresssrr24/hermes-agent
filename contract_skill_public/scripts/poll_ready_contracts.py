@@ -353,6 +353,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--no-drive-upload", action="store_true", help="Generate local PDFs without Drive upload.")
     parser.add_argument("--dry-run", action="store_true", help="Fetch and validate jobs without rendering or posting completion.")
     parser.add_argument("--summary", action="store_true", help="Return ready job details without rendering or posting completion.")
+    parser.add_argument("--generate", action="store_true", help="Generate contracts for all returned ready jobs. Requires explicit flag; default is --summary.")
     parser.add_argument("--preflight", action="store_true", help="Validate runtime dependencies without polling or processing jobs.")
     parser.add_argument("--insecure-skip-verify", action="store_true", help="Skip TLS certificate verification for n8n requests.")
     parser.add_argument("--google-sheet-fallback", action="store_true", help="Fill missing job fields from the configured Google Sheet.")
@@ -391,6 +392,9 @@ def main(argv: list[str] | None = None) -> int:
     if not (args.summary or args.dry_run) and runtime_errors:
         _print_error("; ".join(runtime_errors))
         return 1
+
+    if not (args.generate or args.dry_run):
+        args.summary = True
 
     payload = _request_json("GET", args.ready_url, token=args.ready_token)
     jobs = _extract_jobs(payload)[: max(args.limit, 0)]
