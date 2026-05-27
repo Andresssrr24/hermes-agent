@@ -164,7 +164,9 @@
         {
           "name": "professional_intro",
           "page": 1,
-          "rect": [55, 70, 555, 166],
+          "rect": [78, 100, 555, 158],
+          "redact_rect": [55, 105, 540, 166],
+          "insert_at": [78, 96],
           "font_size": 9,
           "leading": 11,
           "uppercase": true,
@@ -186,9 +188,9 @@
         {
           "name": "client_intro",
           "page": 1,
-          "rect": [55, 175, 555, 213],
-          "redact_rect": [55, 175, 555, 213],
-          "insert_at": [55, 135],
+          "rect": [78, 158, 555, 203],
+          "redact_rect": [55, 176, 540, 210],
+          "insert_at": [78, 154],
           "font_size": 9,
           "leading": 11,
           "uppercase": true,
@@ -196,6 +198,20 @@
             "{company_name}: EMPRESA DEL SECTOR {company_sector}, CON RNC/DOCUMENTO {company_document},",
             "REPRESENTADA POR {owner_name}, NUMERO DE IDENTIFICACION PERSONAL",
             "{owner_identity_document}, EN ADELANTE EL CLIENTE."
+          ]
+        },
+        {
+          "name": "parties_intro",
+          "page": 1,
+          "rect": [59.5, 205, 555, 245],
+          "redact_rect": [55, 212, 555, 263],
+          "insert_at": [59.5, 201],
+          "font_size": 9,
+          "leading": 11,
+          "uppercase": true,
+          "lines": [
+            "LAS PARTES CONVIENEN EN CELEBRAR EL PRESENTE CONTRATO DE SERVICIOS",
+            "PROFESIONALES (EN ADELANTE EL CONTRATO), BAJO LOS SIGUIENTES TERMINOS Y CONDICIONES:"
           ]
         },
         {
@@ -211,18 +227,41 @@
           ]
         },
         {
-          "name": "signature_client",
+          "name": "professional_signature",
           "page": 4,
-          "rect": [343.5, 720, 570, 790],
-          "font_size": 10,
-          "leading": 9.8,
-          "fontname": "hebo",
-          "uppercase": true,
+          "rect": [76, 650, 290, 790],
+          "redact_rect": [70, 660, 290, 790],
+          "images": [
+            {
+              "path": "{professional_signature_image}",
+              "rect": [110, 742, 220, 787]
+            }
+          ],
+          "font_size": 9,
+          "leading": 10,
           "lines": [
-            "{owner_name}",
-            "{company_name}",
+            "EL PROFESIONAL",
+            "Nombre: {professional_representative_name}",
+            "Empresa: {professional_company_name}",
+            "Whatsapp: {professional_whatsapp}",
+            "Correo: {professional_email}",
+            "Firma:"
+          ]
+        },
+        {
+          "name": "client_signature",
+          "page": 4,
+          "rect": [343.5, 650, 570, 790],
+          "redact_rect": [335, 710, 570, 790],
+          "font_size": 9,
+          "leading": 10,
+          "lines": [
+            "EL CLIENTE",
+            "Nombre: {owner_name}",
+            "Empresa: {company_name}",
             "RNC: {company_document}",
-            "IDENTIFICACION: {owner_identity_document}"
+            "Identificacion: {owner_identity_document}",
+            "Firma: __________________________"
           ]
         }
       ]
@@ -232,7 +271,9 @@
         {
           "name": "professional_intro",
           "page": 1,
-          "rect": [55, 70, 555, 166],
+          "rect": [78, 100, 555, 158],
+          "redact_rect": [55, 105, 540, 166],
+          "insert_at": [78, 96],
           "font_size": 9,
           "leading": 11,
           "uppercase": true,
@@ -254,9 +295,9 @@
         {
           "name": "client_intro",
           "page": 1,
-          "rect": [55, 175, 555, 225],
-          "redact_rect": [55, 175, 555, 225],
-          "insert_at": [55, 135],
+          "rect": [78, 158, 555, 215],
+          "redact_rect": [55, 176, 540, 224],
+          "insert_at": [78, 154],
           "font_size": 9,
           "leading": 11,
           "uppercase": true,
@@ -264,6 +305,20 @@
             "{company_name}: EMPRESA DEL SECTOR {company_sector}, CON RNC/DOCUMENTO {company_document},",
             "REPRESENTADA POR {owner_name}, NUMERO DE IDENTIFICACION PERSONAL",
             "{owner_identity_document}, EN ADELANTE EL CLIENTE."
+          ]
+        },
+        {
+          "name": "parties_intro",
+          "page": 1,
+          "rect": [59.5, 218, 555, 258],
+          "redact_rect": [55, 226, 555, 268],
+          "insert_at": [59.5, 214],
+          "font_size": 9,
+          "leading": 11,
+          "uppercase": true,
+          "lines": [
+            "LAS PARTES CONVIENEN EN CELEBRAR EL PRESENTE CONTRATO DE SERVICIOS",
+            "PROFESIONALES (EN ADELANTE EL CONTRATO), BAJO LOS SIGUIENTES TERMINOS Y CONDICIONES:"
           ]
         },
         {
@@ -279,18 +334,41 @@
           ]
         },
         {
-          "name": "signature_client",
+          "name": "professional_signature",
           "page": 4,
-          "rect": [343.5, 720, 570, 790],
-          "font_size": 10,
-          "leading": 9.8,
-          "fontname": "hebo",
-          "uppercase": true,
+          "rect": [76, 650, 290, 790],
+          "redact_rect": [70, 660, 290, 790],
+          "images": [
+            {
+              "path": "{professional_signature_image}",
+              "rect": [110, 742, 220, 787]
+            }
+          ],
+          "font_size": 9,
+          "leading": 10,
           "lines": [
-            "{owner_name}",
-            "{company_name}",
+            "EL PROFESIONAL",
+            "Nombre: {professional_representative_name}",
+            "Empresa: {professional_company_name}",
+            "Whatsapp: {professional_whatsapp}",
+            "Correo: {professional_email}",
+            "Firma:"
+          ]
+        },
+        {
+          "name": "client_signature",
+          "page": 4,
+          "rect": [343.5, 650, 570, 790],
+          "redact_rect": [335, 710, 570, 790],
+          "font_size": 9,
+          "leading": 10,
+          "lines": [
+            "EL CLIENTE",
+            "Nombre: {owner_name}",
+            "Empresa: {company_name}",
             "RNC: {company_document}",
-            "IDENTIFICACION: {owner_identity_document}"
+            "Identificacion: {owner_identity_document}",
+            "Firma: __________________________"
           ]
         }
       ]
