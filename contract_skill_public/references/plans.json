@@ -9,7 +9,8 @@
     "ein": "COMPANY-TAX-ID",
     "address": "COMPANY ADDRESS",
     "whatsapp": "+18099164499",
-    "email": "bryan@grwestate.com"
+    "email": "bryan@grwestate.com",
+    "signature_image": "CONFIGURE_SIGNATURE_IMAGE"
   },
   "google_drive": {
     "folder_id": "CONFIGURE_GOOGLE_DRIVE_FOLDER_ID",

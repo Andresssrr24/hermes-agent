@@ -125,6 +125,12 @@
           "rect": [65, 330, 535, 420],
           "redact_rect": [65, 330, 535, 420],
           "erase_rects": [[70, 424, 525, 430]],
+          "images": [
+            {
+              "path": "{professional_signature_image}",
+              "rect": [100, 395, 210, 440]
+            }
+          ],
           "font_size": 10,
           "leading": 13,
           "lines": [
@@ -133,13 +139,13 @@
             "Empresa: {professional_company_name}",
             "Whatsapp: {professional_whatsapp}",
             "Correo: {professional_email}",
-            "Firma: __________________________"
+            "Firma:"
           ]
         },
         {
           "name": "client_signature",
           "page": 3,
-          "rect": [65, 440, 535, 555],
+          "rect": [65, 455, 535, 570],
           "font_size": 10,
           "leading": 13,
           "lines": [

@@ -3,6 +3,7 @@ __pycache__/
 .DS_Store
 sanitize-rules.private.json
 output/*.pdf
+output/private-assets/
 templates/*.pdf
 !output/.gitignore
 !templates/README.md

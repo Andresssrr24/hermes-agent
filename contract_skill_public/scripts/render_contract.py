@@ -133,6 +133,7 @@ def _professional_values(config: dict[str, Any]) -> dict[str, str]:
         "professional_address": address,
         "professional_whatsapp": professional.get("whatsapp", ""),
         "professional_email": professional.get("email", ""),
+        "professional_signature_image": professional.get("signature_image", ""),
     }
 
 
@@ -155,6 +156,16 @@ def _insert_text_run(page: Any, point: tuple[float, float], text: str, font_size
     return fitz.get_text_length(text, fontname=fontname, fontsize=font_size)
 
 
+def _resolve_asset_path(path_text: str, skill_dir: Path) -> Path | None:
+    path_text = path_text.strip()
+    if not path_text or path_text.startswith("CONFIGURE_"):
+        return None
+    path = Path(path_text).expanduser()
+    if not path.is_absolute():
+        path = skill_dir / path
+    return path if path.exists() else None
+
+
 def _add_manual_blocks(doc: Any, blocks: list[dict[str, Any]], values: dict[str, Any]) -> None:
     import fitz  # type: ignore[import-not-found]
 
@@ -172,6 +183,12 @@ def _add_manual_blocks(doc: Any, blocks: list[dict[str, Any]], values: dict[str,
         for line in block.get("draw_lines", []):
             width = float(line[4]) if len(line) > 4 else 1.0
             page.draw_line((line[0], line[1]), (line[2], line[3]), color=(0.45, 0.45, 0.45), width=width, overlay=True)
+
+        for image in block.get("images", []):
+            image_path_text = _format_line(str(image.get("path", "")), values, False)
+            image_path = _resolve_asset_path(image_path_text, _skill_dir())
+            if image_path:
+                page.insert_image(fitz.Rect(*image["rect"]), filename=str(image_path), overlay=True)
 
         insert_at = block.get("insert_at")
         if insert_at:
