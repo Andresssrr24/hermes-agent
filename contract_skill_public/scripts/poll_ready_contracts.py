@@ -80,55 +80,8 @@ def _stored_token_scopes(token_path: Path) -> list[str]:
     return list(SHEETS_READONLY_SCOPES)
 
 
-def _validate_safe_path(path_str: str) -> Path:
-    if not path_str:
-        raise ValueError("Path must be a non-empty string.")
-
-    # Resolve the path to its absolute real path
-    expanded = os.path.expanduser(path_str)
-    abs_path = os.path.abspath(expanded)
-    real_path = os.path.realpath(abs_path)
-    paths_to_check = {abs_path, real_path}
-
-    # 1. Deny system directories that must not contain the OAuth token
-    blocked_root_prefixes = [
-        "/etc", "/var", "/sys", "/proc", "/boot", "/dev", "/bin", "/sbin", "/lib", "/usr"
-    ]
-    for prefix in blocked_root_prefixes:
-        if any(path.startswith(prefix + os.sep) or path == prefix for path in paths_to_check):
-            raise PermissionError(f"Access denied: {path_str} points to a blocked system directory.")
-
-    # 2. Deny user sensitive directories (derived from user's home folder)
-    # E.g. .ssh, .aws, .kube, .gnupg, .docker, etc.
-    home = os.path.realpath(os.path.expanduser("~"))
-    blocked_user_subdirs = [
-        ".ssh", ".aws", ".gnupg", ".kube", ".docker", ".azure", ".config/gh"
-    ]
-    for subdir in blocked_user_subdirs:
-        prefix = os.path.join(home, subdir)
-        if real_path.startswith(prefix + os.sep) or real_path == prefix:
-            raise PermissionError(f"Access denied: {path_str} is within a blocked user subdirectory.")
-
-    # 3. Deny specific sensitive files
-    blocked_files = {
-        os.path.join(home, ".bashrc"),
-        os.path.join(home, ".zshrc"),
-        os.path.join(home, ".profile"),
-        os.path.join(home, ".bash_profile"),
-        os.path.join(home, ".zprofile"),
-        os.path.join(home, ".netrc"),
-        os.path.join(home, ".pgpass"),
-        os.path.join(home, ".npmrc"),
-        os.path.join(home, ".pypirc"),
-    }
-    if real_path in blocked_files:
-        raise PermissionError(f"Access denied: {path_str} is a blocked sensitive file.")
-
-    return Path(real_path)
-
-
 def _build_sheets_service(token_path: str = "") -> Any:
-    resolved_token = _validate_safe_path(token_path) if token_path else _validate_safe_path(str(_hermes_home() / "google_token.json"))
+    resolved_token = Path(token_path).expanduser() if token_path else _hermes_home() / "google_token.json"
     if not resolved_token.exists():
         raise RuntimeError(
             f"Google token not found: {resolved_token}. Run Google Workspace OAuth setup first."
