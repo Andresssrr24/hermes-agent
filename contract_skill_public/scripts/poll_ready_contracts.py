@@ -312,15 +312,61 @@ def _run_renderer(job: dict[str, Any], no_drive_upload: bool = False) -> dict[st
         return {"success": False, "error": f"renderer returned non-JSON output: {completed.stdout.strip()}"}
 
 
+def _setup_client_folder(
+    normalized: dict[str, Any],
+    no_client_folder: bool = False,
+) -> dict[str, Any] | None:
+    if no_client_folder:
+        return None
+    config = _load_plans_config()
+    cf = config.get("client_folder")
+    if not isinstance(cf, dict) or not cf.get("enabled"):
+        return None
+    try:
+        from setup_client_folder import setup_client_folder as _do_setup
+    except ImportError:
+        setup_script = _skill_dir() / "scripts" / "setup_client_folder.py"
+        if not setup_script.exists():
+            return {"success": False, "error": "setup_client_folder.py not found"}
+        completed = subprocess.run(
+            [_renderer_python(), str(setup_script),
+             "--company-name", normalized["company_name"],
+             "--owner-name", normalized["owner_name"],
+             "--owner-email", normalized["owner_email"]],
+            check=False, capture_output=True, text=True,
+        )
+        if completed.returncode != 0:
+            return {"success": False, "error": completed.stderr.strip() or completed.stdout.strip() or "client folder setup failed"}
+        try:
+            return json.loads(completed.stdout)
+        except json.JSONDecodeError:
+            return {"success": False, "error": f"setup_client_folder returned non-JSON: {completed.stdout.strip()}"}
+
+    try:
+        return _do_setup(
+            company_name=normalized["company_name"],
+            owner_name=normalized["owner_name"],
+            owner_email=normalized["owner_email"],
+            config=config,
+        )
+    except Exception as exc:
+        return {"success": False, "error": str(exc)}
+
+
 def process_job(
     job: dict[str, Any],
     no_drive_upload: bool = False,
+    no_client_folder: bool = False,
     sheet_config: dict[str, Any] | None = None,
     sheets_service_cache: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     try:
         normalized = _normalize_job(job, sheet_config, sheets_service_cache)
         result = _run_renderer(normalized, no_drive_upload=no_drive_upload)
+        if result.get("success"):
+            folder_result = _setup_client_folder(normalized, no_client_folder=no_client_folder)
+            if folder_result is not None:
+                result["client_folder"] = folder_result
         return {"submission_id": normalized["submission_id"], **result}
     except Exception as exc:
         submission_id = str(job.get("submission_id") or job.get("id") or "unknown")
@@ -351,6 +397,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--complete-token", default=_env("N8N_CONTRACT_COMPLETED_TOKEN"), help="Bearer token for completion endpoint.")
     parser.add_argument("--limit", type=int, default=10, help="Maximum jobs to process in one run.")
     parser.add_argument("--no-drive-upload", action="store_true", help="Generate local PDFs without Drive upload.")
+    parser.add_argument("--no-client-folder", action="store_true", help="Skip client folder creation and email.")
     parser.add_argument("--dry-run", action="store_true", help="Fetch and validate jobs without rendering or posting completion.")
     parser.add_argument("--summary", action="store_true", help="Return ready job details without rendering or posting completion.")
     parser.add_argument("--generate", action="store_true", help="Generate contracts for all returned ready jobs. Requires explicit flag; default is --summary.")
@@ -427,6 +474,7 @@ def main(argv: list[str] | None = None) -> int:
             result = process_job(
                 job,
                 no_drive_upload=args.no_drive_upload,
+                no_client_folder=args.no_client_folder,
                 sheet_config=sheet_config,
                 sheets_service_cache=sheets_service_cache,
             )
