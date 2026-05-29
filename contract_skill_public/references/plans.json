@@ -15,8 +15,11 @@
   "client_folder": {
     "enabled": false,
     "parent_folder_id": "CONFIGURE_CLIENT_FOLDER_PARENT_ID",
-    "share_type": "anyone",
+    "share_type": "user",
     "share_role": "reader",
+    "allow_public_link": false,
+    "share_email": "",
+    "share_domain": "",
     "send_email": true,
     "email_subject": "Your Growth Estate Documents Folder",
     "email_body_template": "Hello {owner_name},\n\nWe have created a Google Drive folder for your documents with Growth Estate.\n\nYou can access it here: {folder_link}\n\nBest regards,\nGrowth Estate Team",
@@ -24,8 +27,11 @@
   },
   "google_drive": {
     "folder_id": "CONFIGURE_GOOGLE_DRIVE_FOLDER_ID",
-    "share_type": "anyone",
+    "share_type": "user",
     "share_role": "reader",
+    "allow_public_link": false,
+    "share_email": "",
+    "share_domain": "",
     "upload_automatically": false
   },
   "google_api_script": "CONFIGURE_GOOGLE_API_SCRIPT",

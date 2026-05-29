@@ -82,10 +82,44 @@ def _drive_config(config: dict[str, Any]) -> dict[str, Any]:
     return dict(config.get("google_drive") or {})
 
 
+def _share_args_for_config(
+    drive: dict[str, Any],
+    file_id: str,
+    share_email: str | None = None,
+) -> list[str]:
+    share_type = str(drive.get("share_type") or "user").strip()
+    share_role = str(drive.get("share_role") or "reader").strip()
+    args = ["drive", "share", file_id, "--type", share_type, "--role", share_role]
+
+    if share_type == "user":
+        email = str(share_email or drive.get("share_email") or "").strip()
+        if not email:
+            raise ValueError("google_drive.share_type=user requires --share-email or google_drive.share_email")
+        args.extend(["--email", email])
+    elif share_type == "group":
+        email = str(drive.get("share_email") or "").strip()
+        if not email:
+            raise ValueError("google_drive.share_type=group requires google_drive.share_email")
+        args.extend(["--email", email])
+    elif share_type == "domain":
+        domain = str(drive.get("share_domain") or "").strip()
+        if not domain:
+            raise ValueError("google_drive.share_type=domain requires google_drive.share_domain")
+        args.extend(["--domain", domain])
+    elif share_type == "anyone":
+        if drive.get("allow_public_link") is not True:
+            raise ValueError("google_drive.share_type=anyone requires allow_public_link=true")
+    else:
+        raise ValueError("google_drive.share_type must be user, group, domain, or anyone")
+
+    return args
+
+
 def upload_contract(
     pdf: Path,
     name: str | None = None,
     folder_id: str | None = None,
+    share_email: str | None = None,
     config: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     pdf = pdf.expanduser().resolve()
@@ -99,17 +133,16 @@ def upload_contract(
     if not resolved_folder_id or resolved_folder_id == "CONFIGURE_GOOGLE_DRIVE_FOLDER_ID":
         raise ValueError("Set google_drive.folder_id in references/plans.json before uploading.")
 
+    share_args = _share_args_for_config(drive, "PENDING_FILE_ID", share_email=share_email)
+
     upload_args = ["drive", "upload", str(pdf), "--name", name or pdf.name, "--parent", resolved_folder_id]
     upload_result = _run_google_api(upload_args)
     file_id = upload_result.get("id")
     if not file_id:
         raise RuntimeError(f"Drive upload did not return a file id: {upload_result}")
 
-    share_type = str(drive.get("share_type") or "anyone")
-    share_role = str(drive.get("share_role") or "reader")
-    share_result = _run_google_api(
-        ["drive", "share", file_id, "--type", share_type, "--role", share_role]
-    )
+    share_args[2] = file_id
+    share_result = _run_google_api(share_args)
 
     return {
         "success": True,
@@ -126,6 +159,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--pdf", required=True, help="Local PDF path to upload.")
     parser.add_argument("--name", default="", help="Drive file name. Defaults to the PDF file name.")
     parser.add_argument("--folder-id", default="", help="Override configured Drive folder ID.")
+    parser.add_argument("--share-email", default="", help="Email address to share with when share_type=user.")
     return parser
 
 
@@ -137,6 +171,7 @@ def main(argv: list[str] | None = None) -> int:
             Path(args.pdf),
             name=args.name or None,
             folder_id=args.folder_id or None,
+            share_email=args.share_email or None,
         )
     except Exception as exc:
         print(json.dumps({"success": False, "error": str(exc)}, ensure_ascii=False), file=sys.stderr)

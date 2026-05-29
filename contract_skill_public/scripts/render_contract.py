@@ -262,7 +262,11 @@ def render_contract(data: dict[str, Any], output: Path | None = None) -> Path:
     return output
 
 
-def _upload_drive_result(output: Path, folder_id: str | None = None) -> dict[str, Any] | None:
+def _upload_drive_result(
+    output: Path,
+    folder_id: str | None = None,
+    share_email: str | None = None,
+) -> dict[str, Any] | None:
     config = _load_json(_skill_dir() / "references" / "plans.json")
     drive_config = dict(config.get("google_drive") or {})
     if not drive_config.get("upload_automatically", False) and not folder_id:
@@ -271,7 +275,7 @@ def _upload_drive_result(output: Path, folder_id: str | None = None) -> dict[str
     try:
         from upload_contract_to_drive import upload_contract
 
-        return upload_contract(output, name=output.name, folder_id=folder_id, config=config)
+        return upload_contract(output, name=output.name, folder_id=folder_id, share_email=share_email, config=config)
     except Exception as exc:
         return {"success": False, "error": str(exc)}
 
@@ -283,6 +287,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--contract-date", help="Contract date as YYYY-MM-DD, DD/MM/YYYY, or MM/DD/YYYY.")
     parser.add_argument("--no-drive-upload", action="store_true", help="Generate only the local PDF.")
     parser.add_argument("--drive-folder-id", default="", help="Override configured Google Drive folder ID.")
+    parser.add_argument("--share-email", default="", help="Email address to share uploaded PDFs with when share_type=user.")
     for field in REQUIRED_FIELDS:
         parser.add_argument(f"--{field.replace('_', '-')}", dest=field)
     return parser
@@ -299,7 +304,11 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     result: dict[str, Any] = {"success": True, "output": str(output)}
     if not args.no_drive_upload:
-        drive_result = _upload_drive_result(output, folder_id=args.drive_folder_id or None)
+        drive_result = _upload_drive_result(
+            output,
+            folder_id=args.drive_folder_id or None,
+            share_email=args.share_email or data.get("owner_email"),
+        )
         if drive_result is not None:
             result["drive"] = drive_result
     print(json.dumps(result, ensure_ascii=False))

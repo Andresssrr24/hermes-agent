@@ -88,6 +88,39 @@ def _resolve_placeholders(template: str, **kwargs: str) -> str:
     return result
 
 
+def _share_args_for_config(
+    cf: dict[str, Any],
+    folder_id: str,
+    owner_email: str,
+) -> list[str]:
+    share_type = str(cf.get("share_type") or "user").strip()
+    share_role = str(cf.get("share_role") or "reader").strip()
+    args = ["drive", "share", folder_id, "--type", share_type, "--role", share_role]
+
+    if share_type == "user":
+        email = str(cf.get("share_email") or owner_email or "").strip()
+        if not email:
+            raise ValueError("client_folder.share_type=user requires owner_email or client_folder.share_email")
+        args.extend(["--email", email])
+    elif share_type == "group":
+        email = str(cf.get("share_email") or "").strip()
+        if not email:
+            raise ValueError("client_folder.share_type=group requires client_folder.share_email")
+        args.extend(["--email", email])
+    elif share_type == "domain":
+        domain = str(cf.get("share_domain") or "").strip()
+        if not domain:
+            raise ValueError("client_folder.share_type=domain requires client_folder.share_domain")
+        args.extend(["--domain", domain])
+    elif share_type == "anyone":
+        if cf.get("allow_public_link") is not True:
+            raise ValueError("client_folder.share_type=anyone requires allow_public_link=true")
+    else:
+        raise ValueError("client_folder.share_type must be user, group, domain, or anyone")
+
+    return args
+
+
 def setup_client_folder(
     company_name: str,
     owner_name: str,
@@ -104,6 +137,7 @@ def setup_client_folder(
     parent_folder_id = str(cf.get("parent_folder_id") or "").strip()
     if not parent_folder_id or parent_folder_id.startswith("CONFIGURE_"):
         raise ValueError("Set client_folder.parent_folder_id in references/plans.json")
+    share_args = _share_args_for_config(cf, "PENDING_FOLDER_ID", owner_email)
 
     folder_name = f"MATERIAL {company_name}"
     create_result = _run_google_api(
@@ -114,11 +148,8 @@ def setup_client_folder(
         raise RuntimeError(f"Drive folder creation did not return an id: {create_result}")
     folder_link = create_result.get("webViewLink", "")
 
-    share_type = str(cf.get("share_type") or "anyone")
-    share_role = str(cf.get("share_role") or "reader")
-    _run_google_api(
-        ["drive", "share", folder_id, "--type", share_type, "--role", share_role]
-    )
+    share_args[2] = folder_id
+    share_result = _run_google_api(share_args)
 
     email_sent = False
     if cf.get("send_email", False) and owner_email:
@@ -147,6 +178,7 @@ def setup_client_folder(
         "folder_id": folder_id,
         "folder_name": folder_name,
         "folder_link": folder_link,
+        "share": share_result,
         "email_sent": email_sent,
     }
 

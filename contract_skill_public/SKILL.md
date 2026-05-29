@@ -35,6 +35,7 @@ Do not use this skill to negotiate terms, add clauses, generate a different serv
 - To enable Drive uploads, complete Google Workspace OAuth with the bundled `google-workspace` skill.
 - Set `google_api_script` in `references/plans.json` to the absolute path where the google-workspace skill's `google_api.py` lives.
 - Set `google_drive.folder_id` in `references/plans.json` to your fixed Drive folder and enable `upload_automatically` if desired.
+- Keep the parent `MATERIAL CLIENTES` Drive folder private to internal staff. Share only each client's own folder or PDF with that client's email unless `allow_public_link` is explicitly enabled.
 
 The sample configuration intentionally uses placeholder company and client data.
 
@@ -76,7 +77,7 @@ Prefer JSON input for fewer quoting issues:
 | --- | --- |
 | Generate PDF | `scripts/render_contract.py` |
 | Generate PDF without Drive upload | `scripts/render_contract.py --no-drive-upload` |
-| Upload existing PDF | `scripts/upload_contract_to_drive.py` |
+| Upload existing PDF | `scripts/upload_contract_to_drive.py --share-email client@example.com` |
 | Process confirmed n8n jobs | `scripts/poll_ready_contracts.py --generate` |
 | Check pending confirmed jobs | `scripts/poll_ready_contracts.py --insecure-skip-verify` |
 | Check pending jobs with Sheet fallback | `scripts/poll_ready_contracts.py --google-sheet-fallback --insecure-skip-verify` |
@@ -91,7 +92,7 @@ Prefer JSON input for fewer quoting issues:
 3. Normalize the ad budget to a USD number without changing the user's value.
 4. Run `scripts/render_contract.py` with structured input.
 5. Verify the command returns `success: true` and an output path.
-6. If Drive upload is enabled, verify `drive.webViewLink` and return it with the PDF path.
+6. If Drive upload is enabled, verify `drive.webViewLink` and return it with the PDF path only after confirming access is limited to the intended recipient unless public links were explicitly enabled.
 
 If placement looks wrong, generate a grid with `scripts/calibrate_template.py` and adjust `references/fields.json`.
 
@@ -171,6 +172,8 @@ After processing, report successful contracts with local PDF paths and Drive lin
 - Do not generate contracts for n8n onboarding submissions until the company user confirms the paid plan/price.
 - `Pending contracts` means confirmed `ready_for_contract` jobs, not every submitted onboarding form.
 - Do not infer the plan from campaign budget; use only the confirmed plan from n8n/WhatsApp.
+- Do not share the parent `MATERIAL CLIENTES` folder with clients; that can expose sibling client folders.
+- Do not use `share_type: "anyone"` unless `allow_public_link: true` is an explicit privacy risk acceptance. Anyone links can be forwarded and opened by anyone with the URL.
 
 ## Verification
 
@@ -180,4 +183,4 @@ After processing, report successful contracts with local PDF paths and Drive lin
 - The configured professional-party data is present where expected.
 - No unapproved fields were added.
 - Signature areas remain ready to sign manually.
-- If Drive upload is enabled, the shared link opens without requesting access.
+- If Drive upload is enabled, the link opens only for the intended client account unless public links were explicitly enabled.
