@@ -15,6 +15,9 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, os.path.dirname(__file__))
+from normalize import normalize_form_data  # noqa: E402
+
 
 REQUIRED_CONTRACT_FIELDS = [
     "plan",
@@ -269,8 +272,12 @@ def _normalize_job(
     if not submission_id:
         raise ValueError("job is missing submission_id")
 
-    normalized = {field: str(merged.get(field, "")).strip() for field in REQUIRED_CONTRACT_FIELDS}
-    missing = [field for field, value in normalized.items() if not value]
+    raw = {field: str(merged.get(field, "")).strip() for field in REQUIRED_CONTRACT_FIELDS}
+    raw["submission_id"] = submission_id
+    if merged.get("contract_date"):
+        raw["contract_date"] = str(merged["contract_date"]).strip()
+
+    missing = [field for field, value in raw.items() if not value and field not in ("contract_date", "submission_id")]
     if missing and sheet_config:
         cache = sheets_service_cache if sheets_service_cache is not None else {}
         service = cache.get("service")
@@ -279,14 +286,15 @@ def _normalize_job(
             cache["service"] = service
         row = _fetch_sheet_row(submission_id, sheet_config, service)
         for field in missing:
-            normalized[field] = _resolve_sheet_value(field, row, sheet_config)
-        missing = [field for field, value in normalized.items() if not value]
+            raw[field] = _resolve_sheet_value(field, row, sheet_config)
+
+    normalized, warnings = normalize_form_data(raw)
+
+    missing = [field for field in REQUIRED_CONTRACT_FIELDS if not normalized.get(field)]
     if missing:
         raise ValueError(f"job {submission_id} missing required fields: {', '.join(missing)}")
 
-    normalized["submission_id"] = submission_id
-    if merged.get("contract_date"):
-        normalized["contract_date"] = str(merged["contract_date"]).strip()
+    normalized["_warnings"] = warnings
     return normalized
 
 

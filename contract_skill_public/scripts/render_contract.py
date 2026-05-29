@@ -5,11 +5,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
+
+sys.path.insert(0, os.path.dirname(__file__))
+from normalize import normalize_form_data  # noqa: E402
 
 
 REQUIRED_FIELDS = [
@@ -55,23 +59,6 @@ def _slugify(value: str) -> str:
     return slug or "client"
 
 
-def _normalize_plan(value: Any) -> str:
-    text = str(value or "").strip().lower().replace("$", "")
-    match = re.search(r"(650|1500|2500)", text)
-    if not match:
-        raise ValueError("plan must be one of 650, 1500, or 2500")
-    return match.group(1)
-
-
-def _normalize_budget(value: Any) -> str:
-    text = str(value or "").strip()
-    text = text.replace("USD", "").replace("usd", "").replace("$", "").strip()
-    text = re.sub(r"[^0-9.,]", "", text)
-    if not text:
-        raise ValueError("ad_budget_30_days_usd is required")
-    return text
-
-
 def _parse_contract_date(value: Any) -> date:
     if isinstance(value, date):
         return value
@@ -102,8 +89,10 @@ def _load_input(args: argparse.Namespace) -> dict[str, Any]:
     if args.contract_date:
         data["contract_date"] = args.contract_date
 
-    data["plan"] = _normalize_plan(data.get("plan"))
-    data["ad_budget_30_days_usd"] = _normalize_budget(data.get("ad_budget_30_days_usd"))
+    data, warnings = normalize_form_data(data)
+    for warning in warnings:
+        print(f"WARNING: {warning}", file=sys.stderr)
+
     contract_date = _parse_contract_date(data.get("contract_date"))
     data["contract_date"] = contract_date.isoformat()
     data["contract_date_es"] = _spanish_date(contract_date)
