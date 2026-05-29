@@ -92,3 +92,22 @@ def test_normalize_job_without_fallback_reports_missing_fields(poller):
 
     assert "company_sector" in str(exc.value)
     assert "company_whatsapp" in str(exc.value)
+
+
+def test_validate_safe_path_allows_regular_token_path(poller, tmp_path):
+    token_path = tmp_path / "google_token.json"
+
+    assert poller._validate_safe_path(str(token_path)) == token_path.resolve()
+
+
+@pytest.mark.parametrize("path", ["/etc/passwd", "/usr/local/token.json"])
+def test_validate_safe_path_blocks_system_paths(poller, path):
+    with pytest.raises(PermissionError):
+        poller._validate_safe_path(path)
+
+
+def test_validate_safe_path_blocks_sensitive_home_file(poller, monkeypatch, tmp_path):
+    monkeypatch.setattr(poller.os.path, "expanduser", lambda p: str(tmp_path) if p == "~" else p)
+
+    with pytest.raises(PermissionError):
+        poller._validate_safe_path(str(tmp_path / ".netrc"))
