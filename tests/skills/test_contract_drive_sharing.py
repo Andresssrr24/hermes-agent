@@ -154,6 +154,78 @@ def test_client_folder_parent_is_optional(setup_client_folder, monkeypatch):
     assert calls[0] == ["drive", "create-folder", "MATERIAL ACME"]
 
 
+def test_client_folder_email_template_decodes_escaped_newlines(setup_client_folder, monkeypatch):
+    calls = []
+
+    def fake_run(args):
+        calls.append(args)
+        if args[1] == "create-folder":
+            return {"id": "folder-123", "webViewLink": "https://drive/folder-123"}
+        return {"status": "ok"}
+
+    monkeypatch.setattr(setup_client_folder, "_run_google_api", fake_run)
+    setup_client_folder.setup_client_folder(
+        company_name="ACME",
+        owner_name="Jane Doe",
+        owner_email="jane@example.com",
+        config={
+            "client_folder": {
+                "enabled": True,
+                "parent_folder_id": "",
+                "share_type": "anyone",
+                "share_role": "reader",
+                "allow_public_link": True,
+                "send_email": True,
+                "email_html": False,
+                "email_subject": "Tus documentos Growth Estate",
+                "email_body_template": "Hola {owner_name},\\n\\nAccede aqui:\\n{folder_link}",
+            }
+        },
+    )
+
+    gmail_call = calls[2]
+    body = gmail_call[gmail_call.index("--body") + 1]
+    assert body == "Hola Jane Doe,\n\nAccede aqui:\nhttps://drive/folder-123"
+    assert "--html" not in gmail_call
+
+
+def test_client_folder_html_email_escapes_placeholders_and_sets_html_flag(setup_client_folder, monkeypatch):
+    calls = []
+
+    def fake_run(args):
+        calls.append(args)
+        if args[1] == "create-folder":
+            return {"id": "folder-123", "webViewLink": "https://drive/folder-123?x=1&y=2"}
+        return {"status": "ok"}
+
+    monkeypatch.setattr(setup_client_folder, "_run_google_api", fake_run)
+    setup_client_folder.setup_client_folder(
+        company_name="ACME & Sons",
+        owner_name="Jane <CEO>",
+        owner_email="jane@example.com",
+        config={
+            "client_folder": {
+                "enabled": True,
+                "parent_folder_id": "",
+                "share_type": "anyone",
+                "share_role": "reader",
+                "allow_public_link": True,
+                "send_email": True,
+                "email_html": True,
+                "email_subject": "Tus documentos Growth Estate",
+                "email_body_template_html": "<p>Hola {owner_name}</p><a href=\"{folder_link}\">Abrir</a>",
+            }
+        },
+    )
+
+    gmail_call = calls[2]
+    body = gmail_call[gmail_call.index("--body") + 1]
+    assert "--html" in gmail_call
+    assert "Jane &lt;CEO&gt;" in body
+    assert "Jane <CEO>" not in body
+    assert 'href="https://drive/folder-123?x=1&amp;y=2"' in body
+
+
 def test_upload_contract_user_share_requires_email_before_upload(upload_contract, tmp_path, monkeypatch):
     pdf = tmp_path / "contract.pdf"
     pdf.write_bytes(b"%PDF-1.4\n")

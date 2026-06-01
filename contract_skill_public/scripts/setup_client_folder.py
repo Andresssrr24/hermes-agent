@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import os
 import subprocess
@@ -88,6 +89,46 @@ def _resolve_placeholders(template: str, **kwargs: str) -> str:
     return result
 
 
+def _decode_template_escapes(template: str) -> str:
+    return template.replace("\\r\\n", "\n").replace("\\n", "\n").replace("\\t", "\t")
+
+
+def _html_email_template() -> str:
+    return """<p>Hola {owner_name},</p>
+
+<p>Hemos creado tu carpeta de Google Drive con tus documentos de Growth Estate.</p>
+
+<p>
+  <a href="{folder_link}" style="display:inline-block;padding:12px 18px;background:#1a73e8;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:600;">
+    Abrir carpeta en Google Drive
+  </a>
+</p>
+
+<p>
+  Si el boton no funciona, copia y pega este enlace en tu navegador:<br>
+  <a href="{folder_link}">{folder_link}</a>
+</p>
+
+<p>Saludos,<br>Growth Estate Team</p>"""
+
+
+def _render_email_body(cf: dict[str, Any], *, owner_name: str, company_name: str, folder_link: str) -> tuple[str, bool]:
+    use_html = cf.get("email_html") is True
+    template_key = "email_body_template_html" if use_html else "email_body_template"
+    default_template = _html_email_template() if use_html else "Your Google Drive folder link: {folder_link}"
+    body_template = _decode_template_escapes(str(cf.get(template_key) or default_template))
+
+    values = {
+        "owner_name": owner_name or "Valued Client",
+        "company_name": company_name,
+        "folder_link": folder_link,
+    }
+    if use_html:
+        values = {key: html.escape(value, quote=True) for key, value in values.items()}
+
+    return _resolve_placeholders(body_template, **values), use_html
+
+
 def _share_args_for_config(
     cf: dict[str, Any],
     folder_id: str,
@@ -153,9 +194,8 @@ def setup_client_folder(
     email_sent = False
     if cf.get("send_email", False) and owner_email:
         subject = str(cf.get("email_subject") or "Your Growth Estate Documents Folder")
-        body_template = str(cf.get("email_body_template") or "Your Google Drive folder link: {folder_link}")
-        body = _resolve_placeholders(
-            body_template,
+        body, use_html = _render_email_body(
+            cf,
             owner_name=owner_name or "Valued Client",
             company_name=company_name,
             folder_link=folder_link,
@@ -166,6 +206,8 @@ def setup_client_folder(
             "--subject", subject,
             "--body", body,
         ]
+        if use_html:
+            gmail_args.append("--html")
         email_from = str(cf.get("email_from") or "").strip()
         if email_from:
             gmail_args.extend(["--from", email_from])

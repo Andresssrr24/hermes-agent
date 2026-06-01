@@ -21,8 +21,10 @@
     "share_email": "",
     "share_domain": "",
     "send_email": true,
-    "email_subject": "Your Growth Estate Documents Folder",
-    "email_body_template": "Hello {owner_name},\n\nWe have created a Google Drive folder for your documents with Growth Estate.\n\nYou can access it here: {folder_link}\n\nBest regards,\nGrowth Estate Team",
+    "email_subject": "Tus documentos Growth Estate",
+    "email_html": true,
+    "email_body_template": "Hola {owner_name},\n\nHemos creado tu carpeta de Google Drive con tus documentos de Growth Estate.\n\nPuedes acceder aqui:\n{folder_link}\n\nSaludos,\nGrowth Estate Team",
+    "email_body_template_html": "<p>Hola {owner_name},</p>\n\n<p>Hemos creado tu carpeta de Google Drive con tus documentos de Growth Estate.</p>\n\n<p><a href=\"{folder_link}\" style=\"display:inline-block;padding:12px 18px;background:#1a73e8;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:600;\">Abrir carpeta en Google Drive</a></p>\n\n<p>Si el boton no funciona, copia y pega este enlace en tu navegador:<br><a href=\"{folder_link}\">{folder_link}</a></p>\n\n<p>Saludos,<br>Growth Estate Team</p>",
     "email_from": "bryan@grwestate.com"
   },
   "google_drive": {
