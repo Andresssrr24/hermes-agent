@@ -54,3 +54,12 @@ def test_2500_intro_blocks_are_left_aligned_and_redact_right_side():
     assert client_intro["insert_at"][0] == 59.5
     assert professional_intro["redact_rect"][2] >= 590
     assert client_intro["redact_rect"][2] >= 590
+
+
+def test_client_signature_blocks_do_not_include_signature_underline():
+    fields = json.loads(FIELDS_CONFIG.read_text(encoding="utf-8"))
+
+    for plan, plan_config in fields["plans"].items():
+        client_signature = _block(plan_config["manual_blocks"], "client_signature")
+        assert "Firma:" in client_signature["lines"]
+        assert all("____" not in line for line in client_signature["lines"]), plan

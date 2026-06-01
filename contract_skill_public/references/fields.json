@@ -154,7 +154,7 @@
             "Empresa: {company_name}",
             "Whatsapp: {owner_whatsapp}",
             "Correo: {owner_email}",
-            "Firma: __________________________"
+            "Firma:"
           ]
         }
       ]
@@ -261,7 +261,7 @@
             "Empresa: {company_name}",
             "RNC: {company_document}",
             "Identificacion: {owner_identity_document}",
-            "Firma: __________________________"
+            "Firma:"
           ]
         }
       ]
@@ -378,7 +378,7 @@
             "Empresa: {company_name}",
             "RNC: {company_document}",
             "Identificacion: {owner_identity_document}",
-            "Firma: __________________________"
+            "Firma:"
           ]
         }
       ]
