@@ -77,6 +77,10 @@ def _spanish_date(value: date) -> str:
     return f"{value.day} DE {SPANISH_MONTHS[value.month]} DE {value.year}"
 
 
+def _spanish_month_year(value: date) -> str:
+    return f"{SPANISH_MONTHS[value.month]} {value.year}"
+
+
 def _load_input(args: argparse.Namespace) -> dict[str, Any]:
     data: dict[str, Any] = {}
     if args.input:
@@ -96,6 +100,7 @@ def _load_input(args: argparse.Namespace) -> dict[str, Any]:
     contract_date = _parse_contract_date(data.get("contract_date"))
     data["contract_date"] = contract_date.isoformat()
     data["contract_date_es"] = _spanish_date(contract_date)
+    data["contract_month_year_es"] = _spanish_month_year(contract_date)
     data.setdefault("generated_date", date.today().isoformat())
 
     missing = [field for field in REQUIRED_FIELDS if not str(data.get(field, "")).strip()]

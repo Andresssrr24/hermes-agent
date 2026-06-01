@@ -271,9 +271,9 @@
         {
           "name": "professional_intro",
           "page": 1,
-          "rect": [78, 100, 555, 158],
-          "redact_rect": [55, 105, 540, 166],
-          "insert_at": [78, 96],
+          "rect": [59.5, 100, 555, 158],
+          "redact_rect": [55, 105, 590, 166],
+          "insert_at": [59.5, 96],
           "font_size": 9,
           "leading": 11,
           "uppercase": true,
@@ -293,11 +293,21 @@
           "lines": ["{company_name}"]
         },
         {
+          "name": "cover_date",
+          "page": 0,
+          "rect": [220, 750, 380, 790],
+          "redact_rect": [220, 750, 380, 790],
+          "insert_at": [248, 754],
+          "font_size": 15,
+          "leading": 18,
+          "lines": ["{contract_month_year_es}"]
+        },
+        {
           "name": "client_intro",
           "page": 1,
-          "rect": [78, 158, 555, 215],
-          "redact_rect": [55, 176, 540, 224],
-          "insert_at": [78, 154],
+          "rect": [59.5, 158, 555, 215],
+          "redact_rect": [55, 176, 590, 224],
+          "insert_at": [59.5, 154],
           "font_size": 9,
           "leading": 11,
           "uppercase": true,
