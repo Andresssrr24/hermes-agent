@@ -35,7 +35,8 @@ Do not use this skill to negotiate terms, add clauses, generate a different serv
 - To enable Drive uploads, complete Google Workspace OAuth with the bundled `google-workspace` skill.
 - Set `google_api_script` in `references/plans.json` to the absolute path where the google-workspace skill's `google_api.py` lives.
 - Set `google_drive.folder_id` in `references/plans.json` to your fixed Drive folder and enable `upload_automatically` if desired.
-- Keep the parent `MATERIAL CLIENTES` Drive folder private to internal staff. Share only each client's own folder or PDF with that client's email unless `allow_public_link` is explicitly enabled.
+- `client_folder.parent_folder_id` is optional. Leave it blank to create each client folder independently instead of under a shared parent folder.
+- If you configure a shared parent folder such as `MATERIAL CLIENTES`, keep that parent private to internal staff. Only each individual client folder should be shared externally.
 
 The sample configuration intentionally uses placeholder company and client data.
 

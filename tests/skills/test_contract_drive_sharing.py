@@ -125,6 +125,35 @@ def test_client_folder_public_link_allowed_when_explicit(setup_client_folder, mo
     assert calls[1] == ["drive", "share", "folder-123", "--type", "anyone", "--role", "reader"]
 
 
+def test_client_folder_parent_is_optional(setup_client_folder, monkeypatch):
+    calls = []
+
+    def fake_run(args):
+        calls.append(args)
+        if args[1] == "create-folder":
+            return {"id": "folder-123", "webViewLink": "https://drive/folder-123"}
+        return {"status": "shared"}
+
+    monkeypatch.setattr(setup_client_folder, "_run_google_api", fake_run)
+    setup_client_folder.setup_client_folder(
+        company_name="ACME",
+        owner_name="Jane Doe",
+        owner_email="jane@example.com",
+        config={
+            "client_folder": {
+                "enabled": True,
+                "parent_folder_id": "",
+                "share_type": "anyone",
+                "share_role": "reader",
+                "allow_public_link": True,
+                "send_email": False,
+            }
+        },
+    )
+
+    assert calls[0] == ["drive", "create-folder", "MATERIAL ACME"]
+
+
 def test_upload_contract_user_share_requires_email_before_upload(upload_contract, tmp_path, monkeypatch):
     pdf = tmp_path / "contract.pdf"
     pdf.write_bytes(b"%PDF-1.4\n")

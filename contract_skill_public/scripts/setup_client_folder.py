@@ -135,14 +135,13 @@ def setup_client_folder(
         return {"success": True, "skipped": True, "reason": "client_folder.enabled is false"}
 
     parent_folder_id = str(cf.get("parent_folder_id") or "").strip()
-    if not parent_folder_id or parent_folder_id.startswith("CONFIGURE_"):
-        raise ValueError("Set client_folder.parent_folder_id in references/plans.json")
     share_args = _share_args_for_config(cf, "PENDING_FOLDER_ID", owner_email)
 
     folder_name = f"MATERIAL {company_name}"
-    create_result = _run_google_api(
-        ["drive", "create-folder", folder_name, "--parent", parent_folder_id]
-    )
+    create_args = ["drive", "create-folder", folder_name]
+    if parent_folder_id and not parent_folder_id.startswith("CONFIGURE_"):
+        create_args.extend(["--parent", parent_folder_id])
+    create_result = _run_google_api(create_args)
     folder_id = create_result.get("id")
     if not folder_id:
         raise RuntimeError(f"Drive folder creation did not return an id: {create_result}")
