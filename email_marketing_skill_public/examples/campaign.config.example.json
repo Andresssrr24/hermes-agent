@@ -1,0 +1,30 @@
+{
+  "company_name": "Client Company",
+  "from_email": "hello@clientdomain.com",
+  "reply_to": "hello@clientdomain.com",
+  "calendly_url": "https://calendly.com/client/30min",
+  "logo_path": "./assets/logo.svg",
+  "primary_color": "#3066b6",
+  "secondary_color": "#1a3d6e",
+  "language": "es",
+  "event_name": "client_company.prospect.created",
+  "template_titles": [
+    "El mayor reto que frena tu crecimiento comercial",
+    "Como recuperar tiempo operativo cada semana",
+    "Por que los prospectos se enfrían antes de comprar",
+    "La diferencia entre seguimiento manual y seguimiento claro",
+    "Como convertir conversaciones en oportunidades reales",
+    "La senal que muestra si tu proceso comercial necesita orden",
+    "El indicador que separa equipos reactivos de equipos consistentes",
+    "Un caso practico de mejora en seguimiento comercial",
+    "Tres cambios simples para mejorar tu conversion",
+    "Listo para ordenar tu proceso comercial"
+  ],
+  "social_urls": {
+    "instagram": "",
+    "linkedin": "",
+    "facebook": "",
+    "whatsapp": ""
+  },
+  "prospect_variables": ["NOMBRE", "CORREO"]
+}
