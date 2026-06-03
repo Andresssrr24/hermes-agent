@@ -53,7 +53,7 @@ The client Calendly URL is the only CTA URL. Do not hard-code any other scheduli
 - Generated `emails/*.html` unless regenerating the campaign.
 - Generated `automation.generated.json` unless regenerating the campaign.
 - Generated `resend.generated.json` unless applying Resend setup.
-- `scripts/node_modules/`
+- Python cache files such as `__pycache__/` or `*.pyc`.
 - Legacy client prototype files unless the task is migration cleanup.
 
 ## Future Changes Queue

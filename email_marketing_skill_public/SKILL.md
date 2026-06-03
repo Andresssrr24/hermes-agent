@@ -123,7 +123,7 @@ Generated files:
 - Do not keep legacy client copy, URLs, colors, or sender identity in generated output.
 - Do not use `EMPRESA` or `PROYECTO` variables. This skill's fixed variables are `NOMBRE` and `CORREO`.
 - Do not activate the automation during setup unless the user explicitly asks for activation.
-- Do not commit `.env`, API keys, generated Resend IDs for a private client, or `node_modules`.
+- Do not commit `.env`, API keys, generated Resend IDs for a private client, or Python cache files.
 - Do not send live events from CRM data during template verification.
 
 ## Verification
